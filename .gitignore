@@ -5,6 +5,7 @@
 __pycache__
 .pytest_cache
 htmlcov
+venv/
 dist
 site
 .coverage
