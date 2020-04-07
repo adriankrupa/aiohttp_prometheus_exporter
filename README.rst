@@ -9,10 +9,12 @@ aiohttp prometheus exporter
 .. image:: https://img.shields.io/travis/adriankrupa/aiohttp_prometheus_exporter.svg
         :target: https://travis-ci.org/adriankrupa/aiohttp_prometheus_exporter
 
+.. image:: https://codecov.io/gh/adriankrupa/aiohttp_prometheus_exporter/branch/master/graph/badge.svg
+        :target: https://codecov.io/gh/adriankrupa/aiohttp_prometheus_exporter
+
 .. image:: https://readthedocs.org/projects/aiohttp-prometheus-exporter/badge/?version=latest
         :target: https://aiohttp-prometheus-exporter.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
-
 
 .. image:: https://pyup.io/repos/github/adriankrupa/aiohttp_prometheus_exporter/shield.svg
      :target: https://pyup.io/repos/github/adriankrupa/aiohttp_prometheus_exporter/
