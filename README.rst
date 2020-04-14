@@ -28,7 +28,6 @@ Prometheus exporter for aiohttp server and client.
 * Free software: MIT license
 * Documentation: https://aiohttp-prometheus-exporter.readthedocs.io.
 
-
 Features
 --------
 
