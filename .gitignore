@@ -16,3 +16,5 @@ log.txt
 Pipfile.lock
 env3.*
 docs_build
+.tox/
+*.egg-info
