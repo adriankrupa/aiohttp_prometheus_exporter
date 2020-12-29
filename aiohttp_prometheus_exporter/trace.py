@@ -20,7 +20,9 @@ class MetricsStore:
 
         self.requests_in_progress_metrics = prometheus_client.Gauge(
             name=f"aiohttp_client_requests_in_progress",
-            documentation="Gauge of client requests by client name, method, scheme and remote currently being processed.",
+            documentation=(
+                "Gauge of client requests by client name, method, scheme and remote currently being processed."
+            ),
             labelnames=["client_name", "method", "scheme", "remote"],
             namespace=namespace,
             registry=registry,
@@ -28,7 +30,10 @@ class MetricsStore:
 
         self.requests_processing_time_metrics = prometheus_client.Histogram(
             name=f"aiohttp_client_request_duration",
-            documentation="Histogram of requests processing time by client name, method, scheme, remote and status code (in seconds).",
+            documentation=(
+                "Histogram of requests processing time by client name, method, scheme, remote and status "
+                "code (in seconds)."
+            ),
             labelnames=["client_name", "method", "scheme", "remote", "status_code"],
             unit="seconds",
             namespace=namespace,
@@ -191,9 +196,7 @@ class PrometheusTraceConfig(aiohttp.TraceConfig):
         loop = get_loop()
         request_end_time = loop.time()
 
-        request_start_time = getattr(
-            trace_config_ctx, "_request_start_time", request_end_time
-        )
+        request_start_time = getattr(trace_config_ctx, "_request_start_time", request_end_time)
 
         self.metrics.requests_in_progress_metrics.labels(
             client_name=self.client_name,
@@ -224,9 +227,7 @@ class PrometheusTraceConfig(aiohttp.TraceConfig):
         trace_config_ctx: SimpleNamespace,
         params: aiohttp.TraceRequestChunkSentParams,
     ) -> None:
-        self.metrics.requests_chunks_sent_metrics.labels(
-            client_name=self.client_name
-        ).inc(len(params.chunk))
+        self.metrics.requests_chunks_sent_metrics.labels(client_name=self.client_name).inc(len(params.chunk))
 
     async def __on_response_chunk_received(
         self,
@@ -234,9 +235,7 @@ class PrometheusTraceConfig(aiohttp.TraceConfig):
         trace_config_ctx: SimpleNamespace,
         params: aiohttp.TraceResponseChunkReceivedParams,
     ) -> None:
-        self.metrics.requests_chunks_received_metrics.labels(
-            client_name=self.client_name
-        ).inc(len(params.chunk))
+        self.metrics.requests_chunks_received_metrics.labels(client_name=self.client_name).inc(len(params.chunk))
 
     async def __on_request_exception(
         self,
@@ -313,9 +312,9 @@ class PrometheusTraceConfig(aiohttp.TraceConfig):
             "_connection_queued_start_time",
             connection_queued_end_time,
         )
-        self.metrics.connection_queued_time_metrics.labels(
-            client_name=self.client_name
-        ).observe(connection_queued_end_time - connection_queued_start_time)
+        self.metrics.connection_queued_time_metrics.labels(client_name=self.client_name).observe(
+            connection_queued_end_time - connection_queued_start_time
+        )
 
     @staticmethod
     async def __on_connection_create_start(
@@ -339,9 +338,9 @@ class PrometheusTraceConfig(aiohttp.TraceConfig):
             "_connection_create_start_time",
             connection_create_end_time,
         )
-        self.metrics.connection_create_time_metrics.labels(
-            client_name=self.client_name
-        ).observe(connection_create_end_time - connection_create_start_time)
+        self.metrics.connection_create_time_metrics.labels(client_name=self.client_name).observe(
+            connection_create_end_time - connection_create_start_time
+        )
 
     async def __on_connection_reuseconn(
         self,
@@ -349,9 +348,7 @@ class PrometheusTraceConfig(aiohttp.TraceConfig):
         trace_config_ctx: SimpleNamespace,
         params: aiohttp.TraceConnectionReuseconnParams,
     ) -> None:
-        self.metrics.connection_reuseconn_metrics.labels(
-            client_name=self.client_name
-        ).inc()
+        self.metrics.connection_reuseconn_metrics.labels(client_name=self.client_name).inc()
 
     @staticmethod
     async def __on_dns_resolvehost_start(
@@ -370,12 +367,10 @@ class PrometheusTraceConfig(aiohttp.TraceConfig):
     ) -> None:
         loop = get_loop()
         dns_resolvehost_end_time = loop.time()
-        dns_resolvehost_start_time = getattr(
-            trace_config_ctx, "_dns_resolvehost_start_time", dns_resolvehost_end_time
+        dns_resolvehost_start_time = getattr(trace_config_ctx, "_dns_resolvehost_start_time", dns_resolvehost_end_time)
+        self.metrics.dns_resolvehost_metrics.labels(client_name=self.client_name, host=params.host).observe(
+            dns_resolvehost_end_time - dns_resolvehost_start_time
         )
-        self.metrics.dns_resolvehost_metrics.labels(
-            client_name=self.client_name, host=params.host
-        ).observe(dns_resolvehost_end_time - dns_resolvehost_start_time)
 
     async def __on_dns_cache_hit(
         self,
@@ -383,9 +378,7 @@ class PrometheusTraceConfig(aiohttp.TraceConfig):
         trace_config_ctx: SimpleNamespace,
         params: aiohttp.TraceDnsCacheHitParams,
     ) -> None:
-        self.metrics.dns_cache_hit_metrics.labels(
-            client_name=self.client_name, host=params.host
-        ).inc()
+        self.metrics.dns_cache_hit_metrics.labels(client_name=self.client_name, host=params.host).inc()
 
     async def __on_dns_cache_miss(
         self,
@@ -393,6 +386,4 @@ class PrometheusTraceConfig(aiohttp.TraceConfig):
         trace_config_ctx: SimpleNamespace,
         params: aiohttp.TraceDnsCacheMissParams,
     ) -> None:
-        self.metrics.dns_cache_miss_metrics.labels(
-            client_name=self.client_name, host=params.host
-        ).inc()
+        self.metrics.dns_cache_miss_metrics.labels(client_name=self.client_name, host=params.host).inc()

@@ -58,9 +58,7 @@ def prometheus_middleware_factory(
     )
 
     @middleware
-    async def prometheus_middleware(
-        request: Request, handler: Callable[[Request], Awaitable[Response]]
-    ):
+    async def prometheus_middleware(request: Request, handler: Callable[[Request], Awaitable[Response]]):
         loop = get_loop()
 
         try:
