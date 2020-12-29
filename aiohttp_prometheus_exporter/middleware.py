@@ -1,5 +1,5 @@
 import asyncio
-from typing import Callable, Awaitable
+from typing import Awaitable, Callable, List, Tuple, Union
 
 import prometheus_client
 from aiohttp.web_exceptions import HTTPException
@@ -13,9 +13,12 @@ def get_loop():
 
 
 def prometheus_middleware_factory(
-    metrics_prefix="aiohttp", registry: prometheus_client.CollectorRegistry = None
+    metrics_prefix="aiohttp",
+    registry: prometheus_client.CollectorRegistry = None,
+    excluded_paths: Union[List[str], Tuple[str]] = None,
 ):
     used_registry = registry if registry else prometheus_client.REGISTRY
+    excluded_paths = excluded_paths or ()
 
     requests_metrics = prometheus_client.Counter(
         name=f"{metrics_prefix}_requests",
@@ -64,6 +67,9 @@ def prometheus_middleware_factory(
             path_template = request.match_info.route.resource.canonical
         except AttributeError:
             path_template = "__not_matched__"
+
+        if path_template.lstrip("/") in excluded_paths:
+            return await handler(request)
 
         requests_metrics.labels(
             method=request.method,

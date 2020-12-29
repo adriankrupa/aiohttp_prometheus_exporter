@@ -12,14 +12,15 @@ from aiohttp_prometheus_exporter.middleware import prometheus_middleware_factory
 
 
 @pytest.fixture
-def app():
+def app(request):
     """ create a test app with various endpoints for the test scenarios """
     app = web.Application()
     routes = web.RouteTableDef()
 
     registry = prometheus_client.CollectorRegistry()
+    excluded_paths = request.param if hasattr(request, "param") else ()
 
-    app.middlewares.append(prometheus_middleware_factory(registry=registry))
+    app.middlewares.append(prometheus_middleware_factory(registry=registry, excluded_paths=excluded_paths))
     app.router.add_get("/metrics", metrics(registry=registry))
 
     @routes.get("/200")
@@ -33,6 +34,10 @@ def app():
     @routes.get("/path/{value}")
     async def response_detail(request):
         return json_response({"message": f"Hello {request.match_info['value']}"})
+
+    @routes.get("/something-to-exclude")
+    async def response_excluded():
+        return json_response({"foo": "bar"})
 
     app.router.add_routes(routes)
 
@@ -187,6 +192,16 @@ class TestMiddleware:
             },
             1.0,
         )
+
+    @pytest.mark.parametrize("app", (["metrics", "something-to-exclude"],), indirect=True)
+    async def test_ensure_excluded_paths_are_not_present(self, client: TestClient, app):
+        await client.get("/200")
+        await client.get("/something-to-exclude")
+        resp = await client.get("/metrics")
+        assert resp.status == 200
+        resp_body = await resp.text()
+        assert "/metrics" not in resp_body
+        assert "/something-to-exclude" not in resp_body
 
 
 def assert_entry_exist(

@@ -14,7 +14,7 @@ requirements = ['aiohttp>=3', 'prometheus_client>=0.6', ]
 
 setup_requirements = ['pytest-runner', ]
 
-test_requirements = ['pytest>=3', ]
+test_requirements = ['pytest>=3', 'pytest-aiohttp>=0.3.0']
 
 setup(
     author="Adrian Krupa",
