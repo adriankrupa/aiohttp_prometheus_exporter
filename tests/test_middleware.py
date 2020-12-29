@@ -20,7 +20,9 @@ def app(request):
     registry = prometheus_client.CollectorRegistry()
     excluded_paths = request.param if hasattr(request, "param") else ()
 
-    app.middlewares.append(prometheus_middleware_factory(registry=registry, excluded_paths=excluded_paths))
+    app.middlewares.append(
+        prometheus_middleware_factory(registry=registry, excluded_paths=excluded_paths)
+    )
     app.router.add_get("/metrics", metrics(registry=registry))
 
     @routes.get("/200")
@@ -193,7 +195,9 @@ class TestMiddleware:
             1.0,
         )
 
-    @pytest.mark.parametrize("app", (["metrics", "something-to-exclude"],), indirect=True)
+    @pytest.mark.parametrize(
+        "app", (["metrics", "something-to-exclude"],), indirect=True
+    )
     async def test_ensure_excluded_paths_are_not_present(self, client: TestClient, app):
         await client.get("/200")
         await client.get("/something-to-exclude")

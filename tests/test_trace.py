@@ -162,7 +162,9 @@ class TestTrace:
             f"{namespace_prefix}aiohttp_client_chunks_sent_bytes",
             f"{namespace_prefix}aiohttp_client_chunks_sent_bytes_total",
             0.0,
-            labels={"client_name": client_name,},
+            labels={
+                "client_name": client_name,
+            },
         )
 
         assert_metric_value(
@@ -170,14 +172,18 @@ class TestTrace:
             f"{namespace_prefix}aiohttp_client_chunks_received_bytes",
             f"{namespace_prefix}aiohttp_client_chunks_received_bytes_total",
             26.0,
-            labels={"client_name": client_name,},
+            labels={
+                "client_name": client_name,
+            },
         )
 
         assert_metric_exists(
             current_frozen_registry,
             f"{namespace_prefix}aiohttp_client_connection_create_seconds",
             f"{namespace_prefix}aiohttp_client_connection_create_seconds_bucket",
-            labels={"client_name": client_name,},
+            labels={
+                "client_name": client_name,
+            },
         )
 
     async def test_parallel_connection(
@@ -198,7 +204,9 @@ class TestTrace:
             current_frozen_registry,
             f"{namespace_prefix}aiohttp_client_connection_create_seconds",
             f"{namespace_prefix}aiohttp_client_connection_create_seconds_bucket",
-            labels={"client_name": client_name,},
+            labels={
+                "client_name": client_name,
+            },
         )
 
         assert_metric_value(
@@ -206,7 +214,9 @@ class TestTrace:
             f"{namespace_prefix}aiohttp_client_connection_reuseconn",
             f"{namespace_prefix}aiohttp_client_connection_reuseconn_total",
             1.0,
-            labels={"client_name": client_name,},
+            labels={
+                "client_name": client_name,
+            },
         )
 
     async def test_redirect(
@@ -333,21 +343,30 @@ class TestTrace:
             current_frozen_registry,
             f"{namespace_prefix}aiohttp_client_dns_resolvehost_seconds",
             f"{namespace_prefix}aiohttp_client_dns_resolvehost_seconds_bucket",
-            labels={"client_name": client_name, "host": "www.google.com",},
+            labels={
+                "client_name": client_name,
+                "host": "www.google.com",
+            },
         )
 
         assert_metric_exists(
             current_frozen_registry,
             f"{namespace_prefix}aiohttp_client_dns_cache_miss",
             f"{namespace_prefix}aiohttp_client_dns_cache_miss_total",
-            labels={"client_name": client_name, "host": "www.google.com",},
+            labels={
+                "client_name": client_name,
+                "host": "www.google.com",
+            },
         )
 
         assert_metric_exists(
             current_frozen_registry,
             f"{namespace_prefix}aiohttp_client_dns_cache_hit",
             f"{namespace_prefix}aiohttp_client_dns_cache_hit_total",
-            labels={"client_name": client_name, "host": "www.google.com",},
+            labels={
+                "client_name": client_name,
+                "host": "www.google.com",
+            },
         )
 
 
