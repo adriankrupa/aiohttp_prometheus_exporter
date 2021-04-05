@@ -16,4 +16,4 @@ pytest-aiohttp==0.3.0
 uvloop==0.14.0
 
 aiohttp==3.6.2
-prometheus_client==0.8.0
+prometheus_client==0.10.0
