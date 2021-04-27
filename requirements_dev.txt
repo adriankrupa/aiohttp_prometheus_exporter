@@ -11,7 +11,7 @@ black==19.10b0
 
 pytest==6.2.1
 pytest-runner==5.2
-pytest-cov==2.10.1
+pytest-cov==2.11.1
 pytest-aiohttp==0.3.0
 uvloop==0.14.0
 
