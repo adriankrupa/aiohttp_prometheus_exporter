@@ -1,8 +1,8 @@
 language: python
 python:
+- 3.9
 - 3.8
 - 3.7
-- 3.6
 install: pip install -U tox-travis codecov
 script: tox
 after_success:
@@ -16,4 +16,4 @@ deploy:
   on:
     tags: true
     repo: adriankrupa/aiohttp_prometheus_exporter
-    python: 3.8
+    python: 3.9
