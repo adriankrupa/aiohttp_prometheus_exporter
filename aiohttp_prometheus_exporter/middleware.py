@@ -79,21 +79,15 @@ def prometheus_middleware_factory(
         ).inc()
 
         request_start_time = loop.time()
+        status_code = 0
+
         try:
             response = await handler(request)
-            request_end_time = loop.time()
-
+            status_code = response.status
         except Exception as e:
+            status_code = e.status if isinstance(e, HTTPException) else 500
             request_end_time = loop.time()
-            status = e.status if isinstance(e, HTTPException) else 500
 
-            responses_metrics.labels(
-                method=request.method,
-                scheme=request.scheme,
-                remote=request.remote,
-                path_template=path_template,
-                status_code=status,
-            ).inc()
             exceptions_metrics.labels(
                 method=request.method,
                 scheme=request.scheme,
@@ -101,36 +95,33 @@ def prometheus_middleware_factory(
                 path_template=path_template,
                 exception_type=type(e).__name__,
             ).inc()
-            requests_processing_time_metrics.labels(
-                method=request.method,
-                scheme=request.scheme,
-                remote=request.remote,
-                path_template=path_template,
-                status_code=status,
-            ).observe(request_end_time - request_start_time)
+
             raise e from None
-        else:
-            responses_metrics.labels(
-                method=request.method,
-                scheme=request.scheme,
-                remote=request.remote,
-                path_template=path_template,
-                status_code=response.status,
-            ).inc()
+        finally:
+            request_end_time = loop.time()
+
             requests_processing_time_metrics.labels(
                 method=request.method,
                 scheme=request.scheme,
                 remote=request.remote,
                 path_template=path_template,
-                status_code=response.status,
+                status_code=status_code,
             ).observe(request_end_time - request_start_time)
-        finally:
+
             requests_in_progress_metrics.labels(
                 method=request.method,
                 scheme=request.scheme,
                 remote=request.remote,
                 path_template=path_template,
             ).dec()
+
+            responses_metrics.labels(
+                method=request.method,
+                scheme=request.scheme,
+                remote=request.remote,
+                path_template=path_template,
+                status_code=status_code,
+            ).inc()
         return response
 
     return prometheus_middleware
