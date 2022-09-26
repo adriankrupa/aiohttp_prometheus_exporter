@@ -15,5 +15,5 @@ pytest-cov==2.12.0
 pytest-aiohttp==0.3.0
 uvloop==0.15.2
 
-aiohttp==3.7.4
+aiohttp==3.8.3
 prometheus_client==0.10.1
